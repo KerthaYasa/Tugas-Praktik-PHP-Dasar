@@ -1,15 +1,14 @@
 <?php
 $hasil = "";
 $pesan = "";
+$angka1 = "";
+$angka2 = "";
+$operator = "tambah"; // default operator
 
 if (isset($_POST["angka1"]) && isset($_POST["angka2"]) && isset($_POST["operator"])) {
-    $angka1 = $_POST["angka1"];
-    $angka2 = $_POST["angka2"];
+    $angka1 = trim($_POST["angka1"]);
+    $angka2 = trim($_POST["angka2"]);
     $operator = $_POST["operator"];
-
-    // Hilangkan spasi di awal & akhir
-    $angka1 = trim($angka1);
-    $angka2 = trim($angka2);
 
     // Validasi input
     if ($angka1 === "" || $angka2 === "") {
@@ -82,16 +81,18 @@ if (isset($_POST["angka1"]) && isset($_POST["angka2"]) && isset($_POST["operator
         <h2>Kalkulator Sederhana</h2>
         <form method="POST" action="">
             <input type="text" name="angka1" placeholder="Angka pertama"
+                   value="<?php echo htmlspecialchars($angka1); ?>"
                    onkeypress="return event.charCode != 32">
             <br>
             <input type="text" name="angka2" placeholder="Angka kedua"
+                   value="<?php echo htmlspecialchars($angka2); ?>"
                    onkeypress="return event.charCode != 32">
             <br>
             <select name="operator">
-                <option value="tambah">Tambah (+)</option>
-                <option value="kurang">Kurang (-)</option>
-                <option value="kali">Kali (×)</option>
-                <option value="bagi">Bagi (÷)</option>
+                <option value="tambah" <?php if ($operator=="tambah") echo "selected"; ?>>Tambah (+)</option>
+                <option value="kurang" <?php if ($operator=="kurang") echo "selected"; ?>>Kurang (-)</option>
+                <option value="kali" <?php if ($operator=="kali") echo "selected"; ?>>Kali (×)</option>
+                <option value="bagi" <?php if ($operator=="bagi") echo "selected"; ?>>Bagi (÷)</option>
             </select>
             <br>
             <input type="submit" value="Hitung">
