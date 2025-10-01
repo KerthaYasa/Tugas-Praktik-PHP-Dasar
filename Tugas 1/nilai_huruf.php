@@ -4,77 +4,64 @@
   <meta charset="UTF-8">
   <title>Konversi Nilai Huruf</title>
   <link rel="stylesheet" href="style.css">
+  <script>
+    // Validasi input: hanya boleh angka + titik desimal
+    function preventInvalidInput(event) {
+      const allowedKeys = ["Backspace", "Delete", "ArrowLeft", "ArrowRight", "Tab", "Enter", "."];
+
+      if (event.key === " ") {
+        event.preventDefault(); // cegah spasi
+      }
+
+      // Cegah input non-angka dan selain titik
+      if (!allowedKeys.includes(event.key) && isNaN(event.key)) {
+        event.preventDefault();
+      }
+    }
+  </script>
 </head>
 <body>
   <div class="container">
     <h2>Konversi Nilai Angka ke Nilai Huruf</h2>
 
-    <form name="nilaiForm" onsubmit="cekNilaiHuruf(event)">
-      <input type="text" 
+    <!-- Form kirim ke halaman ini -->
+    <form method="POST" action="">
+      <input type="number" 
              name="nilai" 
              placeholder="Masukkan nilai (0 - 100)" 
-             onkeydown="preventInvalidInput(event)">
-      <div id="errNilai" class="error"></div>
+             min="0" 
+             max="100" 
+             step="0.01" 
+             required>
       <input type="submit" value="Konversi">
     </form>
 
-    <div id="output" class="output"></div>
+    <div class="output">
+      <?php
+      if ($_SERVER["REQUEST_METHOD"] == "POST") {
+          $nilai = $_POST["nilai"];
+
+          if (is_numeric($nilai) && $nilai >= 0 && $nilai <= 100) {
+              if ($nilai >= 85) {
+                  $huruf = "A";
+              } elseif ($nilai >= 70) {
+                  $huruf = "B";
+              } elseif ($nilai >= 55) {
+                  $huruf = "C";
+              } elseif ($nilai >= 40) {
+                  $huruf = "D";
+              } else {
+                  $huruf = "E";
+              }
+
+              echo "<p>Nilai angka: <strong>$nilai</strong> <br> 
+                    Konversi ke huruf: <strong style='color:blue;'>$huruf</strong></p>";
+          } else {
+              echo "<p style='color:red;'>Masukkan angka antara 0 - 100!</p>";
+          }
+      }
+      ?>
+    </div>
   </div>
-
-  <script>
-    // Cegah input spasi & karakter selain angka
-    function preventInvalidInput(event) {
-      const allowedKeys = [
-        "Backspace", "Delete", "ArrowLeft", "ArrowRight", "Tab", "Enter"
-      ];
-
-      if (event.key === " ") {
-        event.preventDefault();
-      }
-
-      if (!allowedKeys.includes(event.key)) {
-        if (isNaN(event.key)) {
-          event.preventDefault();
-        }
-      }
-    }
-
-    // Fungsi konversi nilai huruf
-    function cekNilaiHuruf(event) {
-      event.preventDefault();
-
-      let nilai = document.forms["nilaiForm"]["nilai"].value.trim();
-      let output = document.getElementById("output");
-      let errorDiv = document.getElementById("errNilai");
-
-      errorDiv.innerHTML = "";
-      output.innerHTML = "";
-
-      if (nilai === "") {
-        errorDiv.innerHTML = "Masukkan nilai terlebih dahulu!";
-        return;
-      } else if (isNaN(nilai)) {
-        errorDiv.innerHTML = "Input hanya boleh angka!";
-        return;
-      }
-
-      nilai = parseInt(nilai);
-
-      if (nilai < 0 || nilai > 100) {
-        errorDiv.innerHTML = "Nilai harus di antara 0 - 100!";
-        return;
-      }
-
-      let huruf = "";
-
-      if (nilai >= 85) huruf = "A";
-      else if (nilai >= 70) huruf = "B";
-      else if (nilai >= 55) huruf = "C";
-      else if (nilai >= 40) huruf = "D";
-      else huruf = "E";
-
-      output.innerHTML = `Nilai <b>${nilai}</b> dikonversi menjadi <b>${huruf}</b>.`;
-    }
-  </script>
 </body>
 </html>

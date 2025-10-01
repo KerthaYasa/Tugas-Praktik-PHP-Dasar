@@ -4,71 +4,58 @@
   <meta charset="UTF-8">
   <title>Cek Ganjil Genap</title>
   <link rel="stylesheet" href="style.css">
+  <script>
+    // Validasi input agar hanya bisa angka (dan minus untuk bilangan negatif)
+    function preventInvalidInput(event) {
+      const allowedKeys = ["Backspace", "Delete", "ArrowLeft", "ArrowRight", "Tab", "Enter"];
+
+      if (event.key === " ") {
+        event.preventDefault(); // cegah spasi
+      }
+
+      // Cegah input non-angka selain tanda minus di awal
+      if (!/[0-9]/.test(event.key) && event.key !== "-" && !allowedKeys.includes(event.key)) {
+        event.preventDefault();
+      }
+
+      // Hanya boleh ada satu tanda minus di awal
+      if (event.key === "-" && event.target.selectionStart !== 0) {
+        event.preventDefault();
+      }
+    }
+  </script>
 </head>
 <body>
   <div class="container">
     <h2>Cek Bilangan Ganjil / Genap</h2>
 
-    <form name="cekForm" onsubmit="cekGanjilGenap(event)">
+    <!-- Form ke halaman ini sendiri -->
+    <form method="POST" action="">
       <input type="text" 
              name="angka" 
              placeholder="Masukkan bilangan bulat" 
-             onkeydown="preventInvalidInput(event)">
-      <div id="errAngka" class="error"></div>
+             onkeydown="preventInvalidInput(event)" 
+             required>
       <input type="submit" value="Cek">
     </form>
 
-    <div id="output" class="output"></div>
+    <div class="output">
+      <?php
+      if ($_SERVER["REQUEST_METHOD"] == "POST") {
+          $angka = $_POST["angka"];
+
+          if (is_numeric($angka)) {
+              if ($angka % 2 == 0) {
+                  echo "<p>Bilangan <strong>$angka</strong> adalah <span style='color:blue;'>Genap</span></p>";
+              } else {
+                  echo "<p>Bilangan <strong>$angka</strong> adalah <span style='color:green;'>Ganjil</span></p>";
+              }
+          } else {
+              echo "<p style='color:red;'>Input tidak valid, silakan masukkan angka.</p>";
+          }
+      }
+      ?>
+    </div>
   </div>
-
-  <script>
-    // Cegah input spasi & karakter selain angka dan minus
-    function preventInvalidInput(event) {
-      const allowedKeys = [
-        "Backspace", "Delete", "ArrowLeft", "ArrowRight", "Tab", "Enter"
-      ];
-
-      // Jika spasi ditekan → cegah
-      if (event.key === " ") {
-        event.preventDefault();
-      }
-
-      // Jika bukan angka, bukan tanda minus di awal, dan bukan tombol kontrol → cegah
-      if (!allowedKeys.includes(event.key)) {
-        if (isNaN(event.key) && !(event.key === "-" && event.target.selectionStart === 0)) {
-          event.preventDefault();
-        }
-      }
-    }
-
-    // Fungsi cek ganjil/genap
-    function cekGanjilGenap(event) {
-      event.preventDefault();
-
-      let angka = document.forms["cekForm"]["angka"].value.trim();
-      let output = document.getElementById("output");
-      let errorDiv = document.getElementById("errAngka");
-
-      // Reset pesan
-      errorDiv.innerHTML = "";
-      output.innerHTML = "";
-
-      if (angka === "") {
-        errorDiv.innerHTML = "Masukkan angka terlebih dahulu!";
-        return;
-      } else if (isNaN(angka)) {
-        errorDiv.innerHTML = "Input hanya boleh angka!";
-        return;
-      }
-
-      angka = parseInt(angka);
-
-      if (angka % 2 === 0) {
-        output.innerHTML = `Angka <b>${angka}</b> adalah <b>Genap</b>.`;
-      } else {
-        output.innerHTML = `Angka <b>${angka}</b> adalah <b>Ganjil</b>.`;
-      }
-    }
-  </script>
 </body>
 </html>
